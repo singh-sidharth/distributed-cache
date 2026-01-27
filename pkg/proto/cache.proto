@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package cache;
+
+option go_package = "github.com/singh-sidharth/distributed-cache/pkg/proto";
+
+// CacheService defines the core cache operations
+service CacheService {
+  // Get retrieves a value from the cache
+  rpc Get(GetRequest) returns(GetResponse) {}
+
+  // Set stores a key-value pair in the cache
+  rpc Set(SetRequest) returns (SetResponse) {}
+
+  // Delete removes a key from the cache
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {}
+
+  // Health check for the node
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse) {}
+}
+
+message GetRequest {
+  string key = 1;
+}
+
+message GetResponse {
+  bool found = 1;
+  bytes value = 2;
+  int64 timestamp = 3; // When the value was set
+}
+
+message SetRequest {
+  string key = 1;
+  bytes value = 2;
+  int64 ttl_seconds = 3; // Time to live in seconds, 0 means no expiration
+}
+
+message SetResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteRequest {
+  string key = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+  bool found = 2; // Was the key present before deletion
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+  bool healthy = 1;
+  int64 total_keys = 2;
+  int64 memory_bytes = 3;
+}
