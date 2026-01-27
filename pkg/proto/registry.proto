@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package cache;
+
+option go_package = "github.com/singh-sidharth/distributed-cache/pkg/proto";
+
+// NodeRegistryService handles node membership
+service NodeRegistryService {
+  // Register a new cache node
+  rpc RegisterNode(RegisterNodeRequest) returns (RegisterNodeResponse) {}
+
+  // Heartbeat to keep node alive
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse) {}
+
+  // List all active nodes
+  rpc ListNodes(ListNodesRequest) returns (ListNodesResponse) {}
+}
+
+message NodeInfo {
+  string node_id = 1;
+  string address = 2; // host:port
+  int64 registered_at = 3;
+  int64 last_heartbeat = 4;
+  NodeStatus status = 5;
+  map<string, string> metadata = 6; // Additional info like region, capacity
+}
+
+enum NodeStatus {
+  UNKNOWN = 0;
+  HEALTHY = 1;
+  UNHEALTHY = 2;
+  DRAINING = 3;
+}
+
+message RegisterNodeRequest {
+  string node_id = 1;
+  string address = 2;
+  map<string, string> metadata = 3;
+}
+
+message RegisterNodeResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message HeartbeatRequest {
+  string node_id = 1;
+  NodeStatus status = 2;
+}
+
+message HeartbeatResponse {
+  bool acknowledged = 1;
+}
+
+message ListNodesRequest {}
+
+message ListNodesResponse {
+  repeated NodeInfo nodes = 1;
+}
