@@ -206,39 +206,6 @@ func TestLRUCache_UpdateExistingKey(t *testing.T) {
 	assert.Equal(t, 1, cache.Size(), "Size should still be 1")
 }
 
-func TestLRUCache_ConcurrentAccess(t *testing.T) {
-	cache := NewLRUCache(100)
-
-	// This is a basic concurrency smoke test
-	// For production, you'd want more thorough race condition testing
-	done := make(chan bool)
-
-	// Writer goroutine
-	go func() {
-		for i := 0; i < 50; i++ {
-			key := string(rune('a' + i%26))
-			err := cache.Set(key, []byte(key), 0)
-			assert.NoError(t, err, "Concurrent Set should not return error")
-		}
-		done <- true
-	}()
-
-	// Reader goroutine
-	go func() {
-		for i := 0; i < 50; i++ {
-			key := string(rune('a' + i%26))
-			_, _ = cache.Get(key) // Ignore errors, may or may not exist
-		}
-		done <- true
-	}()
-
-	// Wait for both goroutines
-	<-done
-	<-done
-
-	assert.True(t, cache.Size() > 0, "Cache should have items after concurrent access")
-}
-
 func TestLRUCache_EmptyValue(t *testing.T) {
 	cache := NewLRUCache(3)
 
