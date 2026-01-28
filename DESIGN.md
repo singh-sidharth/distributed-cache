@@ -106,7 +106,7 @@ Key "user:123" → hash(key) = 4000 → walks clockwise → finds vnode-1-50 →
 **Decision:** Configurable async (default) or sync replication
 
 #### Async Replication (Default)
-```go
+```
 Write Flow:
 1. Client → Primary node (Set key-value)
 2. Primary writes to local cache
@@ -128,7 +128,7 @@ replication:
 - ❌ Eventual consistency (replicas lag)
 
 #### Sync Replication (Optional)
-```go
+```
 Write Flow:
 1. Client → Primary node
 2. Primary writes locally
